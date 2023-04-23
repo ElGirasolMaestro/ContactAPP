@@ -1,35 +1,31 @@
-from flask import Flask, render_template, request;
+from flask import Flask,render_template,request
 from flask_mysqldb import MySQL
+import yaml
 
-app=Flask(__name__)
-app.config['MYSQL_HOST'] = 'localhost'
-app.config['MYSQL_USER'] = 'root'
-app.config['MYSQL_PASSWORD'] = 'password'
-app.config['MYSQL_DB'] = 'flaskcontacts'
+app = Flask(__name__)
+
+db = yaml.full_load(open('db.yaml'))
+app.config['MYSQL_HOST'] = db['mysql_host']
+app.config['MYSQL_USER'] = db['mysql_user']
+app.config['MYSQL_PASSWORD'] = db['mysql_password']
+app.config['MYSQL_DB'] = db['mysql_db']
+
 mysql = MySQL(app)
 
-@app.route('/') 
-def Index():
+@app.route('/', methods=['GET','POST'])
+def index():
+    if request.method == 'POST':
+        userDetails = request.form
+        name = userDetails['name']
+        email = userDetails['email'] 
+        cur = mysql.connection.cursor()
+        cur.execute("INSERT INTO users(name, email) VALUES(%s, %s)", (name, email))
+        mysql.connection.commit()
+        cur.close()
+        return 'success'
     return render_template('index.html')
 
-@app.route('/add_contact', methods=['POST'])
-def add_contact():
-    if request.method == 'POST':
-        fullname = request.form['fullname']
-        phone = request.form['phone']
-        email = request.form['email']
-        cur = mysql.connection.cursor()
-        cur.execute('INSTER INTO contacts (fullname, phone, email) VALUES (%s, %s, %s)',(fullname, phone, email))
-        mysql.connection.commit()
-        return 'received'
 
-@app.route('/edit')
-def edit_contact():
-    return 'edit contact'
-
-@app.route('/delete')
-def delete_contact():
-    return 'delete contact'
-
-if __name__=='__main__':
-    app.run(port=3000, debug = True)
+    
+if __name__ == '__main__':
+    app.run(debug=True)
