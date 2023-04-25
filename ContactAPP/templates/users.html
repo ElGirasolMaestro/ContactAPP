@@ -1,8 +1,20 @@
+<button type="submit" onclick= "location.href = '/'">Add</button>
 <table border = 1>
     {%for user in userDetails%}
-    <tr>
-        <td>{{user[0]}}</td>
+    
+    <tr class="tabla">
+        <td>{{user[2]}}</td>
+        <td>{{user[0]}}</td> 
         <td>{{user[1]}}</td>
+        <td>
+            <button type="submit" onclick= "location.href = '/edit_user/{{user[2]}}'">Edit</button>
+            <button type="submit"onclick= "location.href = '/delete_user/{{user[2]}}'">Delete</button>
+        </td>
     </tr>
+    
     {%endfor%}
 </table>
+
+
+
+
