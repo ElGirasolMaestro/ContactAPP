@@ -1,1 +1,4 @@
 # ContactAPP
+
+flask
+flask-mysqldb
