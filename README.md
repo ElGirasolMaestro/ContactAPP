@@ -1,4 +1,1 @@
 # ContactAPP
-
-flask
-flask-mysqldb
